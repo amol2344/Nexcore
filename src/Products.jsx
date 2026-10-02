@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useCallback, memo } from 'react';
-
+import './Products.css';
 const PRODUCTS = Array.from({ length: 5000 }, (_, i) => ({
   id: i,
   name: 'Product ' + i,
@@ -9,9 +9,14 @@ const PRODUCTS = Array.from({ length: 5000 }, (_, i) => ({
 const Row = memo(function Row({ product, onSave }) {
   console.log('Row rendered:', product.id);
   return (
-    <li>
-      {product.name} - ${product.price}{' '}
-      <button onClick={() => onSave(product.id)}>Save</button>
+    <li className="product-row">
+      <span>
+        <span className="product-name">{product.name}</span>
+        <span className="product-price">${product.price}</span>
+      </span>
+      <button className="btn btn-small" onClick={() => onSave(product.id)}>
+        Save
+      </button>
     </li>
   );
 });
@@ -28,27 +33,37 @@ export default function Products() {
     ).slice(0, 50);
   }, [search]);
 
-  
   const handleSave = useCallback((id) => {
     setSaved((prev) => [...prev, id]);
   }, []);
 
   return (
-    <div>
+    <div className="products">
       <h1>Products</h1>
-      <input
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-        placeholder="Search"
-      />{' '}
-      <button onClick={() => setCount(count + 1)}>Clicked {count} times</button>
-      <p>Saved: {saved.length}</p>
 
-      <ul>
-        {filtered.map((p) => (
-          <Row key={p.id} product={p} onSave={handleSave} />
-        ))}
-      </ul>
+      <div className="toolbar">
+        <input
+          className="search-input"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Search products"
+        />
+        <button className="btn btn-primary" onClick={() => setCount(count + 1)}>
+          Clicked {count} times
+        </button>
+      </div>
+
+      <p className="saved-count">Saved: {saved.length}</p>
+
+      {filtered.length === 0 ? (
+        <p className="empty">No products match "{search}".</p>
+      ) : (
+        <ul className="product-list">
+          {filtered.map((p) => (
+            <Row key={p.id} product={p} onSave={handleSave} />
+          ))}
+        </ul>
+      )}
     </div>
   );
 }
